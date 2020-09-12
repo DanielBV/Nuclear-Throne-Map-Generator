@@ -2,16 +2,21 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>InstanceMode</title>
+    <title>Nuclear Throne Map Generator</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.1.4/lib/p5.min.js"></script>
-
-    
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.1.4/lib/addons/p5.sound.min.js"></script>
-
-    <script type="text/javascript" src="generator.js"></script>
-
-    <style> body {padding: 0; margin: 0;} canvas {vertical-align: top;} </style>
+    <link rel="stylesheet" href="style.css">
+      
   </head>
   <body>
+    <button id="generateButton" onclick="setup()">Generate</button>
+    <div>
+      % Turn Right (0-100): <input id="iTurnRight" type="text" value="20">
+      % Turn Left (0-100): <input id="iTurnLeft" type="text" value="30">
+      % Turn Back (0-100): <input id="iTurnBack" type="text" value="15">
+    </div>
+    <div id="canvas"></div>
+    <script type="text/javascript" src="generator.js"></script>
+    
   </body>
 </html>

@@ -1,6 +1,22 @@
 let cols = 50;
 let rows = 50;
-let pixelSize = 25;
+let pixelSize = 20;
+
+let tlChance; // Turn left
+let trChance; // Turn Right
+let tbChance; // Turn back
+let dtChance; // Don't turn
+
+const inputTR = document.getElementById('iTurnRight');
+const inputTL = document.getElementById('iTurnLeft');
+const inputTB = document.getElementById('iTurnBack');
+
+function loadForm(){
+  tlChance = parseInt(inputTL.value);
+  trChance = parseInt(inputTR.value);
+  tbChance = parseInt(inputTB.value);
+  dtChance = 100 - tlChance - trChance - tbChance;
+}
 
 /* min (included) and max (excluded). Source: https://www.w3schools.com/js/js_random.asp */
 function getRndInteger(min, max) {
@@ -170,11 +186,11 @@ class MapGenerator{
     const spawnRatio = 5;
     const despawnRatio = 1;
 
-    console.log(table);
-    const w = new Walker(table, 20,25,25,30, Math.floor(cols/2), Math.floor(cols/2), directions.DOWN);
-    const w2 = new Walker(table, 20,25,25,30, Math.floor(cols/2), Math.floor(cols/2), directions.UP);
-    const w3 = new Walker(table, 20,25,25,30, Math.floor(cols/2), Math.floor(cols/2), directions.RIGHT);
-    const w4 = new Walker(table, 20,25,25,30, Math.floor(cols/2), Math.floor(cols/2), directions.LEFT);
+    console.log(table); 
+    const w = new Walker(table, tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(cols/2), directions.DOWN);
+    const w2 = new Walker(table,tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(cols/2), directions.UP);
+    const w3 = new Walker(table,tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(cols/2), directions.RIGHT);
+    const w4 = new Walker(table,tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(cols/2), directions.LEFT);
 
 
     walkers.push(w);
@@ -223,11 +239,13 @@ class MapGenerator{
 
 var map;
 function setup() {
+  loadForm();
   tiles =  {
     FLOOR:color(255, 195, 77),
     WALKER_END: color(255, 0, 0)
   };
   const c = createCanvas(rows*pixelSize, cols*pixelSize);
+  c.parent("canvas");
   const generator = new MapGenerator();
   map = generator.generateMap();
   c.mouseClicked(canvasClicked);
@@ -246,3 +264,4 @@ function draw() {
     }
   }
 }
+
