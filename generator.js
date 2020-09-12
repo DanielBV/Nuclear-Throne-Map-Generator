@@ -45,10 +45,10 @@ function turnAround(direction){
   return (direction+2)%4;
 }
 
-function make2Darray(cols, rows) {
-  var arr = new Array(cols);
+function make2Darray(rows, cols) {
+  var arr = new Array(rows);
   for (var i = 0; i < arr.length; i++) {
-    arr[i] = new Array(rows);
+    arr[i] = new Array(cols);
   }
   return arr;
 }
@@ -66,9 +66,9 @@ class Table{
   constructor(rows, cols){
     this.rows = rows;
     this.cols = cols;
-    this.table = make2Darray(cols, rows); //TODO refactor
-    for (let i = 0; i < cols; i++) {
-      for (let j = 0; j < rows; j++) {
+    this.table = make2Darray(rows, cols); //TODO refactor
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
         this.table[i][j] = 0;
       }
     }
@@ -86,6 +86,8 @@ class Table{
   placeFinish(x,y){
     //this.table[y][x] = tiles.WALKER_END;    
   }
+
+  
 }
 class Walker{
 
@@ -179,18 +181,17 @@ class MapGenerator{
   }
 
   generateMap(){
-    const table = new Table(cols, rows);
+    const table = new Table(rows, cols);
     const walkers = [];
 
     const maxWalkers = 50;
     const spawnRatio = 5;
     const despawnRatio = 1;
 
-    console.log(table); 
-    const w = new Walker(table, tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(cols/2), directions.DOWN);
-    const w2 = new Walker(table,tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(cols/2), directions.UP);
-    const w3 = new Walker(table,tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(cols/2), directions.RIGHT);
-    const w4 = new Walker(table,tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(cols/2), directions.LEFT);
+    const w = new Walker(table, tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.DOWN);
+    const w2 = new Walker(table,tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.UP);
+    const w3 = new Walker(table,tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.RIGHT);
+    const w4 = new Walker(table,tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.LEFT);
 
 
     walkers.push(w);
@@ -242,9 +243,10 @@ function setup() {
   loadForm();
   tiles =  {
     FLOOR:color(255, 195, 77),
-    WALKER_END: color(255, 0, 0)
+    WALKER_END: color(255, 0, 0),
+    WALL: color(176,144,106)
   };
-  const c = createCanvas(rows*pixelSize, cols*pixelSize);
+  const c = createCanvas(cols*pixelSize, rows*pixelSize);
   c.parent("canvas");
   const generator = new MapGenerator();
   map = generator.generateMap();
