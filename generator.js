@@ -77,7 +77,7 @@ class Table{
   }
 
   placeFloor(x,y){
-    if(this.table[y][x]===0){
+    if(!this.isFloor(x,y)){
       this.table[y][x] = tiles.FLOOR;
       this.floors+=1;
     }
@@ -87,7 +87,26 @@ class Table{
     //this.table[y][x] = tiles.WALKER_END;    
   }
 
-  
+  isFloor(x,y){
+    return this.table[y][x]===tiles.FLOOR;
+  }
+
+  placeWalls(){
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if( this.isFloor(x,y)){
+          if((x-1) >= 0 && !this.isFloor(x-1,y))
+            this.table[y][x-1] = tiles.WALL;
+          if((y-1) >= 0 && !this.isFloor(x,y-1))
+            this.table[y-1][x] = tiles.WALL; 
+          if((y+1) < this.rows && !this.isFloor(x,y+1))
+            this.table[y+1][x] = tiles.WALL; 
+          if((x+1) < this.cols && !this.isFloor(x+1,y))
+            this.table[y][x+1] = tiles.WALL;
+        }
+      }
+    }
+  }
 }
 class Walker{
 
@@ -250,6 +269,7 @@ function setup() {
   c.parent("canvas");
   const generator = new MapGenerator();
   map = generator.generateMap();
+  map.placeWalls();
   c.mouseClicked(canvasClicked);
 }
 
@@ -261,7 +281,7 @@ function draw() {
       var x = j * pixelSize;
       var y = i * pixelSize;
       fill(map.table[i][j]);
-      stroke(0);
+      noStroke();
       rect(x, y, pixelSize, pixelSize);
     }
   }
