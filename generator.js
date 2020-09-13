@@ -1,6 +1,8 @@
 let cols = 50;
 let rows = 50;
 let pixelSize = 20;
+let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter;
+
 
 let tlChance; // Turn left
 let trChance; // Turn Right
@@ -10,12 +12,20 @@ let dtChance; // Don't turn
 const inputTR = document.getElementById('iTurnRight');
 const inputTL = document.getElementById('iTurnLeft');
 const inputTB = document.getElementById('iTurnBack');
+const inputMW = document.getElementById('iMaxWalkers');
+const inputWalkerSpawn = document.getElementById('iWalkerSpawn');
+const inputWalkerDespawn = document.getElementById('iWalkerDespawn');
+const inputMaxWalkersPerIter = document.getElementById('iMaxWalkersPerIter')
 
 function loadForm(){
   tlChance = parseInt(inputTL.value);
   trChance = parseInt(inputTR.value);
   tbChance = parseInt(inputTB.value);
   dtChance = 100 - tlChance - trChance - tbChance;
+  maxWalkers = parseInt(inputMW.value);
+  spawnRatio = parseInt(inputWalkerSpawn.value);
+  despawnRatio = parseInt(inputWalkerDespawn.value);
+  maxWalkersPerIter = parseInt(inputMaxWalkersPerIter.value);
 }
 
 /* min (included) and max (excluded). Source: https://www.w3schools.com/js/js_random.asp */
@@ -202,10 +212,7 @@ class MapGenerator{
   generateMap(){
     const table = new Table(rows, cols);
     const walkers = [];
-
-    const maxWalkers = 50;
-    const spawnRatio = 5;
-    const despawnRatio = 1;
+    let newWalkers = [];
 
     const w = new Walker(table, tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.DOWN);
     const w2 = new Walker(table,tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.UP);
@@ -220,19 +227,20 @@ class MapGenerator{
     let i = 0;
     while(table.floors < 150 && i < 200){
       i+=1;
-      console.log(walkers.length);
+      walkers.push(...newWalkers);
+      console.log(newWalkers.length);
+      newWalkers = [];
       for(const walker of walkers){
         walker.walk();
       }
 
       for(const walker of walkers){
-        if(walkers.length < maxWalkers){
+        if((walkers.length + newWalkers.length) < maxWalkers){
           const r = getRndInteger(0,100);
-          if(r < spawnRatio){
+          if(newWalkers.length < maxWalkersPerIter &&  r < spawnRatio){
             const newWalker = new Walker(table, walker._rl, walker._rr, walker._nr, walker._ta, walker._x, walker._y, walker._direction);
             newWalker._direction = turnAround(walker._direction);
-            walkers.push(newWalker);
-            break;
+            newWalkers.push(newWalker);
           }
         }
       }
@@ -252,7 +260,7 @@ class MapGenerator{
     for(const walker of walkers)
       table.placeFinish(walker._x, walker._y);
   
-    console.log("Finally: "+ walkers.length);
+    console.log("Finally: "+ (walkers.length + newWalkers.length));
     return table;
   }
 }
