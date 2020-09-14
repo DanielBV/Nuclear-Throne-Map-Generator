@@ -1,8 +1,6 @@
-let cols = 50;
-let rows = 50;
+let cols, rows;
 let pixelSize = 20;
-let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter;
-
+let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter, maxWalkerDespawnPerIter, placeFinish;
 
 let tlChance; // Turn left
 let trChance; // Turn Right
@@ -15,7 +13,12 @@ const inputTB = document.getElementById('iTurnBack');
 const inputMW = document.getElementById('iMaxWalkers');
 const inputWalkerSpawn = document.getElementById('iWalkerSpawn');
 const inputWalkerDespawn = document.getElementById('iWalkerDespawn');
-const inputMaxWalkersPerIter = document.getElementById('iMaxWalkersPerIter')
+const inputMaxWalkersPerIter = document.getElementById('iMaxWalkersPerIter');
+const inputWalkerDespawnPerIter = document.getElementById('iMaxDespawnWalkersPerIter');
+const inputRows = document.getElementById('iRows');
+const inputCols = document.getElementById('iCols');
+const inputMaxFloors = document.getElementById('iMaxFloors');
+const inputColorLastPosition = document.getElementById('iColorLastPosition');
 
 function loadForm(){
   tlChance = parseInt(inputTL.value);
@@ -26,6 +29,11 @@ function loadForm(){
   spawnRatio = parseInt(inputWalkerSpawn.value);
   despawnRatio = parseInt(inputWalkerDespawn.value);
   maxWalkersPerIter = parseInt(inputMaxWalkersPerIter.value);
+  maxWalkerDespawnPerIter = parseInt(inputWalkerDespawnPerIter.value);
+  rows = parseInt(inputRows.value);
+  cols = parseInt(inputCols.value);
+  maxFloors = parseInt(inputMaxFloors.value);
+  placeFinish = inputColorLastPosition.checked;
 }
 
 /* min (included) and max (excluded). Source: https://www.w3schools.com/js/js_random.asp */
@@ -63,15 +71,7 @@ function make2Darray(rows, cols) {
   return arr;
 }
 
-/**
- * This "abstraction" is just in case I decide to reverse the table
- * @param {*} table 
- * @param {*} x 
- * @param {*} y 
- * @param {*} color 
- */
 
- 
 class Table{
   constructor(rows, cols){
     this.rows = rows;
@@ -94,7 +94,7 @@ class Table{
   }
 
   placeFinish(x,y){
-    //this.table[y][x] = tiles.WALKER_END;    
+    this.table[y][x] = tiles.WALKER_END;    
   }
 
   isFloor(x,y){
@@ -144,6 +144,24 @@ class Walker{
   }
 
   walk(){
+    this.moveInDirection();
+    this.placeFloorInCurrentPosition();
+    this.renewDirection();
+  }
+
+  placeFloorInCurrentPosition(){
+    const doDouble = getRndInteger(0,100);
+    if(doDouble > 90){
+      this._table.placeFloor(this._x, this._y);
+      this._table.placeFloor(this._x+1, this._y);
+      this._table.placeFloor(this._x, this._y+1);
+      this._table.placeFloor(this._x+1, this._y+1);
+    }else{
+      this._table.placeFloor(this._x, this._y);
+    }
+  }
+
+  moveInDirection(){
     let plusX = 0;
     let plusY = 0;
     switch(this._direction){
@@ -160,24 +178,12 @@ class Walker{
         plusY = +1;
         break;
     }
-    //TODO checkear que no se sale de límites
+
     // Leaves a one pixel border for the walls
     if(this._x + plusX > 1 && this._x + plusX < this._table.cols-2)
       this._x += plusX;
     if(this._y + plusY > 1 && this._y + plusY < this._table.rows-2)
       this._y += plusY;
-    
-   
-    const doDouble = getRndInteger(0,100);
-    if(doDouble > 90){
-      this._table.placeFloor(this._x, this._y);
-      this._table.placeFloor(this._x+1, this._y);
-      this._table.placeFloor(this._x, this._y+1);
-      this._table.placeFloor(this._x+1, this._y+1);
-    }else{
-      this._table.placeFloor(this._x, this._y);
-    }
-    this.renewDirection();
   }
 
   renewDirection(){
@@ -190,14 +196,12 @@ class Walker{
       return
     else 
       this._direction = turnAround(this._direction);
-
-
   }
 
 } 
 
 function canvasClicked() {
-  console.log(mouseX, mouseY);
+ 
   const x = Math.floor(mouseX/pixelSize);
   const y = Math.floor(mouseY/pixelSize);
   map.table[y][x]=200;
@@ -225,13 +229,13 @@ class MapGenerator{
     walkers.push(w3);
     walkers.push(w4);
     let i = 0;
-    while(table.floors < 150 && i < 200){
+    while(table.floors < maxFloors && i < 200){
       i+=1;
       walkers.push(...newWalkers);
-      console.log(newWalkers.length);
       newWalkers = [];
       for(const walker of walkers){
-        walker.walk();
+        if(table.floors < maxFloors)
+          walker.walk();
       }
 
       for(const walker of walkers){
@@ -245,20 +249,23 @@ class MapGenerator{
         }
       }
 
+      let despawned = 0;
       for(const walker of walkers){
         if(walkers.length < maxWalkers){
           const r = getRndInteger(0,100);
-          if(r < despawnRatio && walkers.length > 2){
+          if(r < despawnRatio && walkers.length > 2 && despawned < maxWalkerDespawnPerIter){
             walkers.splice(walkers.indexOf(walker),1);
-            break;
+            despawned += 1;
           }
         }
       }
 
     }
-
-    for(const walker of walkers)
-      table.placeFinish(walker._x, walker._y);
+  
+    /*if(placeFinish){
+      for(const walker of walkers)
+        table.placeFinish(walker._x, walker._y);
+    }*/
   
     console.log("Finally: "+ (walkers.length + newWalkers.length));
     return table;
