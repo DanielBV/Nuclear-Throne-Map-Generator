@@ -1,6 +1,7 @@
 let cols, rows;
 let pixelSize = 20;
-let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter, maxWalkerDespawnPerIter, placeFinish;
+let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter, maxWalkerDespawnPerIter, placeFinish, squareRatio,
+  tunnelRatio, tunnelMaxLength;
 
 let tlChance; // Turn left
 let trChance; // Turn Right
@@ -19,6 +20,9 @@ const inputRows = document.getElementById('iRows');
 const inputCols = document.getElementById('iCols');
 const inputMaxFloors = document.getElementById('iMaxFloors');
 const inputColorLastPosition = document.getElementById('iColorLastPosition');
+const inputFillSquare = document.getElementById('iFillSquare');
+const inputStartTunnel = document.getElementById('iStartTunnel');
+const inputMaxTunnelLength = document.getElementById('iTunnelMaxSize');
 
 function loadForm(){
   tlChance = parseInt(inputTL.value);
@@ -34,6 +38,9 @@ function loadForm(){
   cols = parseInt(inputCols.value);
   maxFloors = parseInt(inputMaxFloors.value);
   placeFinish = inputColorLastPosition.checked;
+  squareRatio = parseInt(inputFillSquare.value);
+  tunnelRatio = parseInt(inputStartTunnel.value);
+  tunnelMaxLength = parseInt(inputMaxTunnelLength.value);
 }
 
 /* min (included) and max (excluded). Source: https://www.w3schools.com/js/js_random.asp */
@@ -76,7 +83,7 @@ class Table{
   constructor(rows, cols){
     this.rows = rows;
     this.cols = cols;
-    this.table = make2Darray(rows, cols); //TODO refactor
+    this.table = make2Darray(rows, cols); 
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
         this.table[i][j] = 0;
@@ -151,11 +158,18 @@ class Walker{
 
   placeFloorInCurrentPosition(){
     const doDouble = getRndInteger(0,100);
-    if(doDouble > 90){
+    if(doDouble < squareRatio){
       this._table.placeFloor(this._x, this._y);
       this._table.placeFloor(this._x+1, this._y);
       this._table.placeFloor(this._x, this._y+1);
       this._table.placeFloor(this._x+1, this._y+1);
+    }else if(doDouble < (squareRatio + tunnelRatio)){
+      const length = getRndInteger(1, tunnelMaxLength);
+      this._table.placeFloor(this._x, this._y);
+      for(const i of Array(length).keys()){
+        this.moveInDirection();
+        this._table.placeFloor(this._x, this._y);
+      }
     }else{
       this._table.placeFloor(this._x, this._y);
     }
