@@ -1,7 +1,7 @@
 let cols, rows;
 let pixelSize = 20;
 let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter, maxWalkerDespawnPerIter, placeFinish, squareRatio,
-  tunnelRatio, tunnelMaxLength;
+  tunnelRatio, tunnelMaxLength, maxIterations;
 
 let tlChance; // Turn left
 let trChance; // Turn Right
@@ -23,6 +23,7 @@ const inputColorLastPosition = document.getElementById('iColorLastPosition');
 const inputFillSquare = document.getElementById('iFillSquare');
 const inputStartTunnel = document.getElementById('iStartTunnel');
 const inputMaxTunnelLength = document.getElementById('iTunnelMaxSize');
+const inputMaxIterations = document.getElementById('iMaxIterations');
 
 function loadForm(){
   tlChance = parseInt(inputTL.value);
@@ -41,6 +42,7 @@ function loadForm(){
   squareRatio = parseInt(inputFillSquare.value);
   tunnelRatio = parseInt(inputStartTunnel.value);
   tunnelMaxLength = parseInt(inputMaxTunnelLength.value);
+  maxIterations = parseInt(inputMaxIterations.value);
 }
 
 /* min (included) and max (excluded). Source: https://www.w3schools.com/js/js_random.asp */
@@ -243,7 +245,7 @@ class MapGenerator{
     walkers.push(w3);
     walkers.push(w4);
     let i = 0;
-    while(table.floors < maxFloors && i < 200){
+    while(table.floors < maxFloors && i < maxIterations){
       i+=1;
       walkers.push(...newWalkers);
       newWalkers = [];
