@@ -1,7 +1,10 @@
+'use strict'; 
+
+
 let cols, rows;
 let pixelSize = 20;
 let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter, maxWalkerDespawnPerIter, placeFinish, squareRatio,
-  tunnelRatio, tunnelMaxLength, maxIterations, numInitialWalkers, initialWalkersInDifferentDirection;
+  tunnelRatio, tunnelMaxLength, maxIterations, numInitialWalkers, initialWalkersInDifferentDirection, maxFloors;
 
 let tlChance; // Turn left
 let trChance; // Turn Right
@@ -111,7 +114,7 @@ class Table{
   }
 
   isFloor(x,y){
-    return this.table[y][x]===tiles.FLOOR;
+    return this.table[y][x]===tiles.FLOOR || this.table[y][x]===tiles.WALKER_END;
   }
 
   placeWalls(){
@@ -131,94 +134,6 @@ class Table{
     }
   }
 }
-class Walker{
-
-
-  /**
-   * 
-   * @param {*} table 
-   * @param {*} rlChance Rotate left chance
-   * @param {*} rrChance Rotate right chance 
-   * @param {*} nrChance No rotation chance
-   * @param {*} taChance Turn around chance
-   */
-  constructor(table, rlChance, rrChance, nrChance, taChance, startX, startY, direction){
-    this._table = table;
-    this._rl = rlChance;
-    this._rr = rrChance;
-    this._nr = nrChance;
-    this._ta = taChance;
-    this._x = startX;
-    this._y = startY;
-    this._direction = direction;
-    table.placeFloor(this._x, this._y);
-    if(rlChance + rrChance + nrChance + taChance !== 100)
-      throw new Error("Invalid walker percentages: " + (rlChance + rrChance + nrChance + taChance) );
-  }
-
-  walk(){
-    this.moveInDirection();
-    this.placeFloorInCurrentPosition();
-    this.renewDirection();
-  }
-
-  placeFloorInCurrentPosition(){
-    const doDouble = getRndInteger(0,100);
-    if(doDouble < squareRatio){
-      this._table.placeFloor(this._x, this._y);
-      this._table.placeFloor(this._x+1, this._y);
-      this._table.placeFloor(this._x, this._y+1);
-      this._table.placeFloor(this._x+1, this._y+1);
-    }else if(doDouble < (squareRatio + tunnelRatio)){
-      const length = getRndInteger(1, tunnelMaxLength);
-      this._table.placeFloor(this._x, this._y);
-      for(const i of Array(length).keys()){
-        this.moveInDirection();
-        this._table.placeFloor(this._x, this._y);
-      }
-    }else{
-      this._table.placeFloor(this._x, this._y);
-    }
-  }
-
-  moveInDirection(){
-    let plusX = 0;
-    let plusY = 0;
-    switch(this._direction){
-      case directions.LEFT:
-        plusX = -1;
-        break;
-      case directions.RIGHT:
-        plusX = +1;
-        break;
-      case directions.UP:
-        plusY = -1;
-        break;
-      case directions.DOWN:
-        plusY = +1;
-        break;
-    }
-
-    // Leaves a one pixel border for the walls
-    if(this._x + plusX > 1 && this._x + plusX < this._table.cols-2)
-      this._x += plusX;
-    if(this._y + plusY > 1 && this._y + plusY < this._table.rows-2)
-      this._y += plusY;
-  }
-
-  renewDirection(){
-    const option = getRndInteger(0,100);
-    if(option < this._rl-1 )
-      this._direction = turnRight(this._direction);
-    else if(option < this._rl + this._rr -1)
-      this._direction = turnLeft(this._direction);
-    else if(option < this._rl + this._rr + this._nr -1)
-      return
-    else 
-      this._direction = turnAround(this._direction);
-  }
-
-} 
 
 function canvasClicked() {
  
@@ -229,67 +144,6 @@ function canvasClicked() {
 
 
 
-class MapGenerator{
-  constructor(){
-  }
-
-  generateMap(){
-    const table = new Table(rows, cols);
-    const walkers = [];
-    let newWalkers = [];
-
-    const startingWalkers = numInitialWalkers >= 1 ? numInitialWalkers : 1;
-    let direction = directions.DOWN;
-    for(let i=0; i<startingWalkers; i++){
-      const w = new Walker(table, tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), direction);
-      walkers.push(w);
-      if(initialWalkersInDifferentDirection)
-        direction = turnRight(direction);
-    }
-   
-    let i = 0;
-    while(table.floors < maxFloors && i < maxIterations){
-      i+=1;
-      walkers.push(...newWalkers);
-      newWalkers = [];
-      for(const walker of walkers){
-        if(table.floors < maxFloors)
-          walker.walk();
-      }
-
-      for(const walker of walkers){
-        if((walkers.length + newWalkers.length) < maxWalkers){
-          const r = getRndInteger(0,100);
-          if(newWalkers.length < maxWalkersPerIter &&  r < spawnRatio){
-            const newWalker = new Walker(table, walker._rl, walker._rr, walker._nr, walker._ta, walker._x, walker._y, walker._direction);
-            newWalker._direction = turnAround(walker._direction);
-            newWalkers.push(newWalker);
-          }
-        }
-      }
-
-      let despawned = 0;
-      for(const walker of walkers){
-        if(walkers.length < maxWalkers){
-          const r = getRndInteger(0,100);
-          if(r < despawnRatio && walkers.length > 2 && despawned < maxWalkerDespawnPerIter){
-            walkers.splice(walkers.indexOf(walker),1);
-            despawned += 1;
-          }
-        }
-      }
-
-    }
-  
-    /*if(placeFinish){
-      for(const walker of walkers)
-        table.placeFinish(walker._x, walker._y);
-    }*/
-  
-    console.log("Finally: "+ (walkers.length + newWalkers.length));
-    return table;
-  }
-}
 
 var map;
 function setup() {
@@ -301,7 +155,7 @@ function setup() {
   };
   const c = createCanvas(cols*pixelSize, rows*pixelSize);
   c.parent("canvas");
-  const generator = new MapGenerator();
+  const generator = new MapGenerator(rows, cols, numInitialWalkers);
   map = generator.generateMap();
   map.placeWalls();
   c.mouseClicked(canvasClicked);
@@ -310,7 +164,7 @@ function setup() {
 function draw() {
   background(51);
 
-  for (var i = 0; i < rows; i++) {
+  for (var i = 0; i < rows; i++) { //TODO sería mejor que coja esto de la tabla en vez de tenerlo hardcodeado.
     for (var j = 0; j < cols; j++) {
       var x = j * pixelSize;
       var y = i * pixelSize;
