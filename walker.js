@@ -90,5 +90,14 @@ class Walker{
       this._direction = turnAround(this._direction);
   }
 
+  clone(){
+    return new Walker(this._table, this._rl, this._rr, this._nr, this._ta, this._x, 
+      this._y, this._direction, this._squareRatio, this._tunnelRatio, this._tunnelMaxLength);
+  }
+
+  setDirection(direction){
+    this._direction = direction;
+  }
+
 } 
 

@@ -9,20 +9,22 @@ class MapGenerator{
   }
 
   generateMap(){
-    const table = new Table(this._rows, this._cols); //TODO mover a otra clase
     const walkers = [];
     let newWalkers = [];
 
     const startingWalkers = this._numInitialWalkers >= 1 ? this._numInitialWalkers : 1;
-    let direction = directions.DOWN;
+    console.log( this._walkerPrototype);
+    let nextDirection = this._walkerPrototype._direction;
     for(let i=0; i<startingWalkers; i++){
       //TODO prototype pattern with custom location
-      const w = new Walker(table, tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), direction, squareRatio, tunnelRatio, tunnelMaxLength );
+      const w = this._walkerPrototype.clone();
+      w.setDirection(nextDirection);
       walkers.push(w);
       if(initialWalkersInDifferentDirection)
-        direction = turnRight(direction);
+        nextDirection = turnRight(w._direction);
     }
    
+    const table = this._walkerPrototype._table; // TODO cutre fix para cuando haga el refactor de los walkers
     let i = 0;
     while(table.floors < maxFloors && i < maxIterations){
       i+=1;
@@ -37,7 +39,7 @@ class MapGenerator{
         if((walkers.length + newWalkers.length) < maxWalkers){
           const r = getRndInteger(0,100);
           if(newWalkers.length < maxWalkersPerIter &&  r < spawnRatio){
-            const newWalker = new Walker(table, walker._rl, walker._rr, walker._nr, walker._ta, walker._x, walker._y, walker._direction);
+            const newWalker = walker.clone();
             newWalker._direction = turnAround(walker._direction);
             newWalkers.push(newWalker);
           }
