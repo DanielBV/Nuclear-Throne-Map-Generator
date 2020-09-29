@@ -25,7 +25,7 @@ class Map{
   }
 
   isFloor(x,y){
-    return this.table[y][x]===tiles.FLOOR || this.table[y][x]===tiles.WALKER_END;
+    return this.table[y][x]===tiles.FLOOR;
   }
 
   placeWalls(){

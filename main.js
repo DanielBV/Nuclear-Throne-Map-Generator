@@ -119,16 +119,19 @@ function setup() {
   // De momento voy a hacer esto porque no quiero ponerme ahora con el refactor de los walkers
   const walkerPrototype = new Walker(table, tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.DOWN, squareRatio, tunnelRatio, tunnelMaxLength );;
   const generator = new MapGenerator(rows, cols, numInitialWalkers, walkerPrototype);
-  map = generator.generateMap();
+  const result = generator.generateMap();
+  map = result.map;
   map.placeWalls();
+  if(placeFinish)
+    generator.colorWalkers(map, result.stats.walkers);
   c.mouseClicked(canvasClicked);
 }
 
 function draw() {
   background(51);
 
-  for (var i = 0; i < rows; i++) { //TODO sería mejor que coja esto de la tabla en vez de tenerlo hardcodeado.
-    for (var j = 0; j < cols; j++) {
+  for (var i = 0; i < map.table.length; i++) {
+    for (var j = 0; j < map.table[0].length; j++) {
       var x = j * pixelSize;
       var y = i * pixelSize;
       fill(map.table[i][j]);

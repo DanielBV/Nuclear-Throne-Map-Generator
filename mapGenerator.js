@@ -24,14 +24,14 @@ class MapGenerator{
         nextDirection = turnRight(w._direction);
     }
    
-    const table = this._walkerPrototype._table; // TODO cutre fix para cuando haga el refactor de los walkers
+    const map = this._walkerPrototype._table; // TODO cutre fix para cuando haga el refactor de los walkers
     let i = 0;
-    while(table.floors < maxFloors && i < maxIterations){
+    while(map.floors < maxFloors && i < maxIterations){
       i+=1;
       walkers.push(...newWalkers);
       newWalkers = [];
       for(const walker of walkers){
-        if(table.floors < maxFloors)
+        if(map.floors < maxFloors)
           walker.walk();
       }
 
@@ -59,12 +59,12 @@ class MapGenerator{
 
     }
   
-    if(placeFinish){
-      for(const walker of walkers)
-        table.placeFinish(walker._x, walker._y);
-    }
-  
     console.log("Finally: "+ (walkers.length + newWalkers.length));
-    return table;
+    return {map, stats:{walkers}};
+  }
+
+  colorWalkers(map, walkers){
+    for(const walker of walkers)
+      map.placeFinish(walker._x, walker._y);
   }
 }
