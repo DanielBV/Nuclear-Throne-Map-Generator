@@ -1,5 +1,5 @@
 
-class Table{
+class Map{
   constructor(rows, cols){
     this.rows = rows;
     this.cols = cols;

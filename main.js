@@ -115,7 +115,7 @@ function setup() {
   // b) Si saco la tabla afuera entonces generateMap() ya no es generateMap(), sino fillMap() y hay que pasarle un mapa.
         // Si se hace esto, se tendrían que cambiar el prototipo para que parta del mapa a rellenar, pero como pinta 
         // en el constructor, no se esta pintando en el nuevo mapa (diferencias entre la primera ejecución y el resto) 
-  const table = new Table(rows, cols); //TODO mover a otro fichero
+  const table = new Map(rows, cols); //TODO mover a otro fichero
   // De momento voy a hacer esto porque no quiero ponerme ahora con el refactor de los walkers
   const walkerPrototype = new Walker(table, tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.DOWN, squareRatio, tunnelRatio, tunnelMaxLength );;
   const generator = new MapGenerator(rows, cols, numInitialWalkers, walkerPrototype);
