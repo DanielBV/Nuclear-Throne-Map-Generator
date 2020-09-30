@@ -117,8 +117,9 @@ function setup() {
         // en el constructor, no se esta pintando en el nuevo mapa (diferencias entre la primera ejecución y el resto) 
   const table = new Map(rows, cols); //TODO mover a otro fichero
   // De momento voy a hacer esto porque no quiero ponerme ahora con el refactor de los walkers
+  const mapConfig = {rows, cols, numInitialWalkers, maxWalkersPerIter, spawnRatio, despawnRatio, maxWalkerDespawnPerIter};
   const walkerPrototype = new Walker(table, tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.DOWN, squareRatio, tunnelRatio, tunnelMaxLength );;
-  const generator = new MapGenerator(rows, cols, numInitialWalkers, walkerPrototype, maxWalkersPerIter, spawnRatio, despawnRatio, maxWalkerDespawnPerIter);
+  const generator = new MapGenerator(mapConfig, walkerPrototype);
   const result = generator.generateMap();
   map = result.map;
   map.placeWalls();

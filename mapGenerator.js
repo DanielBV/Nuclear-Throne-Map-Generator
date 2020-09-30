@@ -1,15 +1,15 @@
 
 class MapGenerator{
 
-  constructor(rows, cols, numInitialWalkers, walkerProtoype, maxNewWalkersPerIter, spawnRatio, despawnRatio, maxWalkerDespawnPerIter){
-    this._rows = rows;
-    this._cols = cols;
-    this._numInitialWalkers = numInitialWalkers;
+  constructor(config, walkerProtoype){
+    this._rows = config.rows;
+    this._cols = config.cols;
+    this._numInitialWalkers = config.numInitialWalkers;
     this._walkerPrototype = walkerProtoype; 
-    this._maxWalkersPerIter = maxNewWalkersPerIter;
-    this._spawnRatio = spawnRatio;
-    this._despawnRatio = despawnRatio;
-    this._maxWalkerDespawnPerIter = maxWalkerDespawnPerIter
+    this._maxWalkersPerIter = config.maxWalkersPerIter;
+    this._spawnRatio = config.spawnRatio;
+    this._despawnRatio = config.despawnRatio;
+    this._maxWalkerDespawnPerIter = config.maxWalkerDespawnPerIter;
   }
 
   generateMap(){
@@ -57,7 +57,7 @@ class MapGenerator{
     for(const walker of walkers){
       if((walkers.length + newWalkers.length) < maxWalkers){
         const r = getRndInteger(0,100);
-        if(newWalkers.length < this._maxWalkersPerIter &&  r < this._spawnRatio){ 
+        if(newWalkers.length < this._maxWalkersPerIter &&  r < this._spawnRatio){
           const newWalker = walker.clone();
           newWalker._direction = turnAround(walker._direction);
           newWalkers.push(newWalker);
