@@ -16,8 +16,9 @@ class MapGenerator{
     const walkers = this._generateInitialWalkers()
     let newWalkers = [];
 
-   
-    const map = this._walkerPrototype._table; // TODO cutre fix para cuando haga el refactor de los walkers
+    
+    const map = new Map(this._rows, this._cols); 
+    walkers[0].placeFloorInCurrentPosition(map);
     let i = 0;
     while(map.floors < maxFloors && i < maxIterations){
       i+=1;
@@ -26,7 +27,7 @@ class MapGenerator{
 
       for(const walker of walkers){
         if(map.floors < maxFloors)
-          walker.walk();
+          this.walk(walker, map);
       }
 
      newWalkers = this._generateNewWalkers(walkers);
@@ -34,6 +35,12 @@ class MapGenerator{
     }
     console.log("Finally: "+ (walkers.length + newWalkers.length));
     return {map, stats:{walkers}};
+  }
+
+  walk(walker, map){
+    walker.moveInDirection(map);
+    walker.placeFloorInCurrentPosition(map);
+    walker.renewDirection();
   }
 
   

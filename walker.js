@@ -11,9 +11,8 @@ class Walker{
    * @param {*} nrChance No rotation chance
    * @param {*} taChance Turn around chance
    */
-  constructor(table, rlChance, rrChance, nrChance, taChance, startX, startY, direction, squareRatio, tunnelRatio, tunnelMaxLength){
-    this._table = table;
-    this._rl = rlChance; //TODO Too many arguments
+  constructor(rlChance, rrChance, nrChance, taChance, startX, startY, direction, squareRatio, tunnelRatio, tunnelMaxLength){
+    this._rl = rlChance; 
     this._rr = rrChance;
     this._nr = nrChance;
     this._ta = taChance;
@@ -23,37 +22,33 @@ class Walker{
     this._squareRatio = squareRatio;
     this._tunnelRatio = tunnelRatio;
     this._tunnelMaxLength = tunnelMaxLength;
-    table.placeFloor(this._x, this._y);
+
     if(rlChance + rrChance + nrChance + taChance !== 100)
       throw new Error("Invalid walker percentages: " + (rlChance + rrChance + nrChance + taChance) );
   }
 
-  walk(){
-    this.moveInDirection();
-    this.placeFloorInCurrentPosition();
-    this.renewDirection();
-  }
+ 
 
-  placeFloorInCurrentPosition(){
+  placeFloorInCurrentPosition(map){
     const doDouble = getRndInteger(0,100);
     if(doDouble < this._squareRatio){
-      this._table.placeFloor(this._x, this._y);
-      this._table.placeFloor(this._x+1, this._y);
-      this._table.placeFloor(this._x, this._y+1);
-      this._table.placeFloor(this._x+1, this._y+1);
+      map.placeFloor(this._x, this._y);
+      map.placeFloor(this._x+1, this._y);
+      map.placeFloor(this._x, this._y+1);
+      map.placeFloor(this._x+1, this._y+1);
     }else if(doDouble < (this._squareRatio + this._tunnelRatio)){
       const length = getRndInteger(1, this._tunnelMaxLength);
-      this._table.placeFloor(this._x, this._y);
+      map.placeFloor(this._x, this._y);
       for(const i of Array(length).keys()){
-        this.moveInDirection();
-        this._table.placeFloor(this._x, this._y);
+        this.moveInDirection(map);
+        map.placeFloor(this._x, this._y);
       }
     }else{
-      this._table.placeFloor(this._x, this._y);
+      map.placeFloor(this._x, this._y);
     }
   }
 
-  moveInDirection(){
+  moveInDirection(map){
     let plusX = 0;
     let plusY = 0;
     switch(this._direction){
@@ -70,11 +65,10 @@ class Walker{
         plusY = +1;
         break;
     }
-
     // Leaves a one pixel border for the walls
-    if(this._x + plusX >= 1 && this._x + plusX < this._table.cols-2)
+    if(this._x + plusX >= 1 && this._x + plusX < map.cols-2)
       this._x += plusX;
-    if(this._y + plusY >= 1 && this._y + plusY < this._table.rows-2)
+    if(this._y + plusY >= 1 && this._y + plusY < map.rows-2)
       this._y += plusY;
   }
 
@@ -91,7 +85,7 @@ class Walker{
   }
 
   clone(){
-    return new Walker(this._table, this._rl, this._rr, this._nr, this._ta, this._x, 
+    return new Walker(this._rl, this._rr, this._nr, this._ta, this._x, 
       this._y, this._direction, this._squareRatio, this._tunnelRatio, this._tunnelMaxLength);
   }
 
