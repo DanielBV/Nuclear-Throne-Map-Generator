@@ -1,8 +1,9 @@
 
 class Map{
-  constructor(rows, cols){
+  constructor(rows, cols, maxFloors){
     this.rows = rows;
     this.cols = cols;
+    this._maxFloors = maxFloors;
     this.table = make2Darray(rows, cols); 
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
@@ -14,7 +15,8 @@ class Map{
   }
 
   placeFloor(x,y){
-    if(!this.isFloor(x,y)){
+    // The maxFloor comparation is to ensure 2x2 grids and tunnels don't surpass the floor limit
+    if(this.floors < this._maxFloors && !this.isFloor(x,y)){
       this.table[y][x] = tiles.FLOOR;
       this.floors+=1;
     }

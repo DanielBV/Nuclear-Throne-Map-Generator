@@ -17,7 +17,7 @@ class MapGenerator{
     let newWalkers = [];
 
     
-    const map = new Map(this._rows, this._cols); 
+    const map = new Map(this._rows, this._cols, maxFloors); 
     walkers[0].placeFloorInCurrentPosition(map);
     let i = 0;
     while(map.floors < maxFloors && i < maxIterations){
