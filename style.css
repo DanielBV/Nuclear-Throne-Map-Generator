@@ -1,13 +1,63 @@
-body{
-  padding: 0; 
-  margin: 0;
-} 
+html, body{min-height:100%;}
+body{height:100vh;}
 
-
-canvas {
-  vertical-align: top;
+#canvas{
+  height:100%;
+  width:100%;
+  background-color: black;
+  overflow: auto;
 }
+
+
 
 #generateButton{
   padding: 15px 32px;
+}
+
+body{
+  background-color: rgb(230, 255, 230) !important;
+}
+
+
+#container{
+  display: flex;
+  flex-direction: row;
+  height:100%;
+}
+
+#form{
+  padding:10px;
+  font-size:18px;
+  font-family: "Times New Roman";
+}
+
+
+.label{
+  width:auto;
+  padding-right:20px;
+  margin:0px;
+
+}
+
+.smallInput{
+  width:7%;
+  margin-right:20px;
+
+  overflow: hidden;
+}
+
+.walkerForm{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.label:first-child{
+  margin-left:13px;
+
+}
+
+label{
+  font-size:20px;
 }

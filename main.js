@@ -2,7 +2,7 @@
 
 
 let cols, rows;
-let pixelSize = 20;
+let pixelSize = 15;
 let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter, maxWalkerDespawnPerIter, placeFinish, squareRatio,
   tunnelRatio, tunnelMaxLength, maxIterations, numInitialWalkers, initialWalkersInDifferentDirection, maxFloors;
 
@@ -14,6 +14,7 @@ let dtChance; // Don't turn
 const inputTR = document.getElementById('iTurnRight');
 const inputTL = document.getElementById('iTurnLeft');
 const inputTB = document.getElementById('iTurnBack');
+const inputForward = document.getElementById('iForward');
 const inputMW = document.getElementById('iMaxWalkers');
 const inputWalkerSpawn = document.getElementById('iWalkerSpawn');
 const inputWalkerDespawn = document.getElementById('iWalkerDespawn');
@@ -29,6 +30,41 @@ const inputMaxTunnelLength = document.getElementById('iTunnelMaxSize');
 const inputMaxIterations = document.getElementById('iMaxIterations');
 const inputInitialWalkers = document.getElementById('iInitialWalkers');
 const inputDifferentWalkerDirection = document.getElementById('iDifferentWalkerDirection');
+const inputGenerateBtn = document.getElementById('generateButton'); 
+
+inputTR.oninput = function(){
+  updatePercentage();
+}
+
+inputTL.oninput = function(){
+  updatePercentage();
+}
+
+inputTB.oninput = function(){
+  updatePercentage();
+}
+
+
+updatePercentage();
+
+function updatePercentage(){
+  tlChance = parseInt(inputTL.value);
+  trChance = parseInt(inputTR.value);
+  tbChance = parseInt(inputTB.value);
+
+  const forwardChance = 100 - tlChance - trChance - tbChance
+  if(isNaN(tlChance) || isNaN(trChance) || isNaN(tbChance) || forwardChance < 0 || tlChance < 0 || trChance < 0 || tbChance < 0 ){
+    inputForward.value = "ERROR";
+    inputForward.classList.add("text-danger");
+    inputGenerateBtn.disabled = true;
+  }else{
+    inputForward.value = forwardChance;
+    inputForward.classList.remove("text-danger");
+    inputGenerateBtn.disabled = false;
+  }
+
+  
+}
 
 function loadForm(){
   tlChance = parseInt(inputTL.value);

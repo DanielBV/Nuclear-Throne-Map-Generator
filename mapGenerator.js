@@ -34,6 +34,7 @@ class MapGenerator{
      this._despawnWalkers(walkers);
     }
     console.log("Finally: "+ (walkers.length + newWalkers.length));
+    console.log("Map floors: " + map.floors);
     return {map, stats:{walkers}};
   }
 

@@ -6,35 +6,82 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.1.4/lib/p5.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.1.4/lib/addons/p5.sound.min.js"></script>
     <link rel="stylesheet" href="style.css">
-      
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   </head>
   <body>
-    <button id="generateButton" onclick="setup()">Generate</button>
-    <div>
-      % Turn Right (0-100): <input id="iTurnRight" type="text" value="20">
-      % Turn Left (0-100): <input id="iTurnLeft" type="text" value="30">
-      % Turn Back (0-100): <input id="iTurnBack" type="text" value="15">
-      Max walkers: <input id="iMaxWalkers" type="text" value="50">
+    <div id="container"> 
+    
+        <div id="canvas"></div>
       
+      <div id="form"> 
+        <div id="walkerSettings">
+          <label> <b>Walker Movement Percentages (0-100)</b></label>
+          <div class="walkerForm">
+              <span class="label">% Turn Right</span>
+              <input id="iTurnRight" class="smallInput" type="text" value="20">
+              <span class="label">% Turn Left</span>
+              <input id="iTurnLeft" class="smallInput" type="text" value="30">
+              <span class="label">% Turn Back</span>
+              <input id="iTurnBack" class="smallInput" type="text" value="15"></td>
+              <span class="label text-secondary">Forward</span>
+              <input id="iForward" class="smallInput text-secondary" type="text" readonly="readonly"></td>
+            </div>
+          <label> <b>Walker Creation</b></label>
+        <div class="walkerForm">
+            <span class="label">Max walkers:</span>
+            <input id="iMaxWalkers" class="smallInput" type="text" value="50">  
+          </div>
+        <div class="walkerForm">
+          <span class="label"> % per walker to spawn a new walker (0-100)</span>
+          <input id="iWalkerSpawn" class="smallInput" type="text" value="5">
+          <span class="label"> Max new walkers per iteration</span>
+          <input id="iMaxWalkersPerIter" type="text" class="smallInput" value="1">
+        </div>
+        <div class="walkerForm">
+          <span class="label">% per walker to despawn the walker (0-100)</span>
+          <input id="iWalkerDespawn" class="smallInput" type="text" value="1">
+          <span class="label"> Max removed walkers per iteration </span>
+          <input id="iMaxDespawnWalkersPerIter" class="smallInput" type="text" value="1">
+        </div>
+
+        <label> <b>Map Settings</b></label>
+        <div class="walkerForm">
+            <span class="label"> Rows:</span>
+            <input id="iRows" class="smallInput" type="text"  value="50">
+            <span class="label"> Cols:</span>
+            <input id="iCols" class="smallInput" type="text" value="50">
+            <span class="label"> Max Floors:</span>
+            <input id="iMaxFloors" class="smallInput" type="text" value="110">
+            <span class="label"> Max iterations:</span>
+            <input id="iMaxIterations" type="text" class="smallInput" value="200">
+            <span class="label"> Color last walker position:</span>
+            <input id="iColorLastPosition" value="false" type="checkbox">
+            
+
+          </div>
+          <div class="walkerForm">
+            <span class="label">Initial number of walkers:</span>
+            <input id="iInitialWalkers" class="smallInput" type="text" value="4">
+            <span class="label">Different initial walker Direction:</span>
+            <input id="iDifferentWalkerDirection"  type="checkbox" checked>
+          </div>
+          
+         
+            
+        <label> <b>Walker Behaviour</b></label>
+        <div class="walkerForm">
+            <span class="label">% per walker to fill a 2x2 grid (0-100)</span>
+            <input id="iFillSquare" class="smallInput" type="text" value="10">
+            <span class="label">% per walker to start a tunnel (0-100)</span>
+            <input id="iStartTunnel" class="smallInput"  type="text" value="10">
+            <span class="label">Max length of the tunnel:</span>
+            <input id="iTunnelMaxSize" class="smallInput"  type="text" value="4">
+          </div>
+        </div>
+        <button id="generateButton" class="btn btn-primary" onclick="setup()">Generate</button>
+      </div>
+     
     </div>
-    % per walker to spawn a new walker (0-100) <input id="iWalkerSpawn" type="text" value="5">
-      % per walker to despawn the walker (0-100) <input id="iWalkerDespawn" type="text" value="1">
-    Max new walkers per iteration  <input id="iMaxWalkersPerIter" type="text" value="1">
-   
-    Max removed walkers per iteration  <input id="iMaxDespawnWalkersPerIter" type="text" value="1">
-    Rows:  <input id="iRows" type="text" value="50">
-    Cols:  <input id="iCols" type="text" value="50">
-    Max Floors:  <input id="iMaxFloors" type="text" value="110">
-    % per walker to fill a 2x2 grid (0-100)  <input id="iFillSquare" type="text" value="10">
-    % per walker to start a tunnel (0-100)  <input id="iStartTunnel" type="text" value="10">
-    Max length of the tunnel:   <input id="iTunnelMaxSize" type="text" value="4">
-
-
-    Max iterations: <input id="iMaxIterations" type="text" value="200">
-    Color last walker position:  <input id="iColorLastPosition" value="false" type="checkbox">
-    Initial number of walkers:  <input id="iInitialWalkers" type="text" value="4">
-      Different initial walker Direction:  <input id="iDifferentWalkerDirection" type="checkbox" checked>
-    <div id="canvas"></div>
     <script type="text/javascript" src="walker.js"></script>
     <script type="text/javascript" src="mapGenerator.js"></script>
     <script type="text/javascript" src="map.js"></script>
