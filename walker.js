@@ -65,8 +65,6 @@ class Walker{
         plusY = +1;
         break;
     }
-    if(plusX==0 && plusY==0)
-      console.log("UPSIE", this._direction)
     // Leaves a one pixel border for the walls
     if(this._x + plusX >= 1 && this._x + plusX < map.cols-2)
       this._x += plusX;
@@ -77,9 +75,9 @@ class Walker{
   renewDirection(){
     const option = getRndInteger(0,100);
     if(option < this._rl-1 )
-      this._direction = turnRight(this._direction);
-    else if(option < this._rl + this._rr -1)
       this._direction = turnLeft(this._direction);
+    else if(option < this._rl + this._rr -1)
+      this._direction = turnRight(this._direction);
     else if(option < this._rl + this._rr + this._nr -1)
       return
     else 

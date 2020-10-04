@@ -118,7 +118,7 @@ function turnRight(direction){
 }
 
 function turnLeft(direction){
-  return (direction-1)%4;
+  return (direction+3)%4;
 }
 
 function turnAround(direction){
