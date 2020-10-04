@@ -4,7 +4,7 @@
 let cols, rows;
 let pixelSize = 15;
 let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter, maxWalkerDespawnPerIter, placeFinish, squareRatio,
-  tunnelRatio, tunnelMaxLength, maxIterations, numInitialWalkers, initialWalkersInDifferentDirection, maxFloors;
+  tunnelRatio, tunnelMaxLength, maxIterations, numInitialWalkers, initialWalkersInDifferentDirection, maxFloors, showWalkers;
 
 let tlChance; // Turn left
 let trChance; // Turn Right
@@ -45,7 +45,13 @@ inputTB.oninput = function(){
 }
 
 
-updatePercentage();
+function disableGenerateBtn(){
+  inputGenerateBtn.disabled = true;
+}
+
+function enableGenerateBtn(){
+  inputGenerateBtn.disabled = false;
+}
 
 function updatePercentage(){
   tlChance = parseInt(inputTL.value);
@@ -56,15 +62,18 @@ function updatePercentage(){
   if(isNaN(tlChance) || isNaN(trChance) || isNaN(tbChance) || forwardChance < 0 || tlChance < 0 || trChance < 0 || tbChance < 0 ){
     inputForward.value = "ERROR";
     inputForward.classList.add("text-danger");
-    inputGenerateBtn.disabled = true;
+    disableGenerateBtn();
   }else{
     inputForward.value = forwardChance;
     inputForward.classList.remove("text-danger");
     inputGenerateBtn.disabled = false;
+    enableGenerateBtn();
   }
 
   
 }
+
+updatePercentage();
 
 function loadForm(){
   tlChance = parseInt(inputTL.value);
@@ -80,6 +89,7 @@ function loadForm(){
   cols = parseInt(inputCols.value);
   maxFloors = parseInt(inputMaxFloors.value);
   placeFinish = inputColorLastPosition.checked;
+  showWalkers = inputColorLastPosition.checked; //TOD remove placeFinish
   squareRatio = parseInt(inputFillSquare.value);
   tunnelRatio = parseInt(inputStartTunnel.value);
   tunnelMaxLength = parseInt(inputMaxTunnelLength.value);
@@ -134,7 +144,7 @@ function canvasClicked() {
 
 
 
-var map;
+var map, walkers;
 function setup() {
   loadForm();
   tiles =  {
@@ -150,28 +160,53 @@ function setup() {
   createMap(); 
 }
 
+function nextIter(generator){
+  const x = generator.next();
+  if(x.value){
+    map = x.value.map;
+    walkers = x.value.stats.walkers;
+   setTimeout(() => nextIter(generator),100);
+  }else{
+    map.placeWalls();
+    enableGenerateBtn();
+  }
+}
+
 function createMap(){
+  disableGenerateBtn();
   const mapConfig = {rows, cols, numInitialWalkers, maxWalkersPerIter, spawnRatio, despawnRatio, maxWalkerDespawnPerIter};
   const walkerPrototype = new Walker(tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.DOWN, squareRatio, tunnelRatio, tunnelMaxLength );;
   const generator = new MapGenerator(mapConfig, walkerPrototype);
-  const result = generator.generateMap();
-  map = result.map;
+  const mapGenerator = generator.generateMap();
+  let result;
+  map = mapGenerator.next().value.map;
+  nextIter(mapGenerator);
+  
+ /* map = result.map;
   map.placeWalls();
   if(placeFinish)
-    generator.colorWalkers(map, result.stats.walkers);
+    generator.colorWalkers(map, result.stats.walkers);*/
 }
 
 function draw() {
   background(51);
 
-  for (var i = 0; i < map.table.length; i++) {
-    for (var j = 0; j < map.table[0].length; j++) {
-      var x = j * pixelSize;
-      var y = i * pixelSize;
+  for (let i = 0; i < map.table.length; i++) {
+    for (let j = 0; j < map.table[0].length; j++) {
+      const x = j * pixelSize;
+      const y = i * pixelSize;
       fill(map.table[i][j]);
       noStroke();
       rect(x, y, pixelSize, pixelSize);
     }
   }
+  if(showWalkers)
+    for(const walker of walkers){
+      fill(tiles.WALKER_END);
+      noStroke();
+      const x = walker._x * pixelSize;
+      const y = walker._y * pixelSize;
+      rect(x, y, pixelSize, pixelSize);
+    }
 }
 

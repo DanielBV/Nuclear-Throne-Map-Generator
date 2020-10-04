@@ -12,7 +12,7 @@ class MapGenerator{
     this._maxWalkerDespawnPerIter = config.maxWalkerDespawnPerIter;
   }
 
-  generateMap(){
+ * generateMap(){
     const walkers = this._generateInitialWalkers()
     let newWalkers = [];
 
@@ -32,6 +32,8 @@ class MapGenerator{
 
      newWalkers = this._generateNewWalkers(walkers);
      this._despawnWalkers(walkers);
+     const temp = {map, stats:{walkers}};
+     yield temp;
     }
     console.log("Finally: "+ (walkers.length + newWalkers.length));
     console.log("Map floors: " + map.floors);
@@ -90,7 +92,7 @@ class MapGenerator{
       }
   }
 
-  colorWalkers(map, walkers){
+  static colorWalkers(map, walkers){
     for(const walker of walkers)
       map.placeFinish(walker._x, walker._y);
   }
