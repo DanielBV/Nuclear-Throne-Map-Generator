@@ -34,6 +34,8 @@ let trChance; // Turn Right
 let tbChance; // Turn back
 let dtChance; // Don't turn
 
+let insideAnimation = false;
+
 const inputTR = document.getElementById('iTurnRight');
 const inputTL = document.getElementById('iTurnLeft');
 const inputTB = document.getElementById('iTurnBack');
@@ -55,16 +57,21 @@ const inputInitialWalkers = document.getElementById('iInitialWalkers');
 const inputDifferentWalkerDirection = document.getElementById('iDifferentWalkerDirection');
 const inputGenerateBtn = document.getElementById('generateButton'); 
 
+const labelTR = document.getElementById('labelTR');
+const labelTL = document.getElementById('labelTL');
+const labelTB = document.getElementById('labelTB');
+
+
 inputTR.oninput = function(){
-  updatePercentage();
+  updateWalkerDirectionPercentage();
 }
 
 inputTL.oninput = function(){
-  updatePercentage();
+  updateWalkerDirectionPercentage();
 }
 
 inputTB.oninput = function(){
-  updatePercentage();
+  updateWalkerDirectionPercentage();
 }
 
 function resetSettings(){
@@ -98,27 +105,69 @@ function enableGenerateBtn(){
   inputGenerateBtn.disabled = false;
 }
 
-function updatePercentage(){
+function checkGenerateBtn(){
+  let enable = !insideAnimation;
+
+  if(!walkerMovementRatioIsValid())
+    enable = false;
+  
+  if(enable)
+    enableGenerateBtn();
+  else
+    disableGenerateBtn();
+}
+
+function walkerMovementRatioIsValid(){
   tlChance = parseInt(inputTL.value);
   trChance = parseInt(inputTR.value);
   tbChance = parseInt(inputTB.value);
 
   const forwardChance = 100 - tlChance - trChance - tbChance
-  if(isNaN(tlChance) || isNaN(trChance) || isNaN(tbChance) || forwardChance < 0 || tlChance < 0 || trChance < 0 || tbChance < 0 ){
+  return !isNaN(tlChance) && !isNaN(trChance) && !isNaN(tbChance) 
+    && forwardChance >= 0 && tlChance >= 0 && trChance >= 0 && tbChance >= 0;
+}
+
+function updateWalkerDirectionPercentage(){
+  tlChance = parseInt(inputTL.value);
+  trChance = parseInt(inputTR.value);
+  tbChance = parseInt(inputTB.value);
+
+  let valid = true;
+  if(isNaN(tlChance) || tlChance < 0 || tlChance > 100){
+    valid = false;
+    labelTL.classList.add("text-danger");
+  }else{
+    labelTL.classList.remove("text-danger");
+  }
+
+  if(isNaN(trChance) || trChance < 0 || trChance > 100){
+    valid = false;
+    labelTR.classList.add("text-danger");
+  }else{
+    labelTR.classList.remove("text-danger");
+  }
+
+  if(isNaN(tbChance) || tbChance < 0 || tbChance > 100){
+    valid = false;
+    labelTB.classList.add("text-danger");
+  }else{
+    labelTB.classList.remove("text-danger");
+  }
+
+  const forwardChance = 100 - tlChance - trChance - tbChance
+  if(!valid ||  forwardChance < 0 ){
     inputForward.value = "ERROR";
     inputForward.classList.add("text-danger");
-    disableGenerateBtn();
   }else{
     inputForward.value = forwardChance;
     inputForward.classList.remove("text-danger");
     inputGenerateBtn.disabled = false;
-    enableGenerateBtn();
   }
 
-  
+  checkGenerateBtn();  
 }
 
-updatePercentage();
+updateWalkerDirectionPercentage();
 
 function loadForm(){
   tlChance = parseInt(inputTL.value);
@@ -212,12 +261,14 @@ function nextIter(generator){
    setTimeout(() => nextIter(generator),100);
   }else{
     map.placeWalls();
-    enableGenerateBtn();
+    insideAnimation = false;
+    checkGenerateBtn();
   }
 }
 
 function createMap(){
-  disableGenerateBtn();
+  insideAnimation = true;
+  checkGenerateBtn();
   const mapConfig = {rows, cols, numInitialWalkers, maxWalkersPerIter, spawnRatio, despawnRatio, maxWalkerDespawnPerIter};
   const walkerPrototype = new Walker(tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.DOWN, squareRatio, tunnelRatio, tunnelMaxLength );;
   const generator = new MapGenerator(mapConfig, walkerPrototype);
