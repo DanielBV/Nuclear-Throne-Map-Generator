@@ -1,6 +1,29 @@
 'use strict'; 
 
 
+// Used to reset the settings when the user does Ctrl+R
+const defaultSettings = {
+  rows: 50,
+  cols: 50,
+  maxFloors: 110,
+  maxIterations: 200,
+  colorWalkers: false,
+  initialWalkers: 4,
+  differentWalkerDirection: true,
+  maxWalkers: 50,
+  spawnRatio: 5,
+  maxWalkersPerIter: 1,
+  despawnRatio: 1,
+  maxWalkerDespawnPerIter: 1,
+  turnRight: 20,
+  turnLeft: 30,
+  turnBack: 15,
+  squareRatio: 10,
+  tunnelRatio: 10,
+  tunnelMaxLength: 4
+};
+
+
 let cols, rows;
 let pixelSize = 15;
 let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter, maxWalkerDespawnPerIter, placeFinish, squareRatio,
@@ -44,6 +67,28 @@ inputTB.oninput = function(){
   updatePercentage();
 }
 
+function resetSettings(){
+  inputTR.value = defaultSettings.turnRight;
+  inputTL.value = defaultSettings.turnLeft;
+  inputTB.value = defaultSettings.turnBack;
+  inputMW.value = defaultSettings.maxWalkers;
+  inputWalkerSpawn.value = defaultSettings.spawnRatio;
+  inputWalkerDespawn.value = defaultSettings.despawnRatio;
+  inputMaxWalkersPerIter.value = defaultSettings.maxWalkersPerIter;
+  inputWalkerDespawnPerIter.value = defaultSettings.maxWalkerDespawnPerIter;
+  inputRows.value = defaultSettings.rows;
+  inputCols.value = defaultSettings.cols;
+  inputMaxFloors.value = defaultSettings.maxFloors;
+  inputColorLastPosition.checked = defaultSettings.colorWalkers;
+  inputFillSquare.value = defaultSettings.squareRatio;
+  inputStartTunnel.value = defaultSettings.tunnelRatio;
+  inputMaxTunnelLength.value = defaultSettings.tunnelMaxLength;
+  inputMaxIterations.value = defaultSettings.maxIterations;
+  inputInitialWalkers.value = defaultSettings.initialWalkers;
+  inputDifferentWalkerDirection.checked = defaultSettings.differentWalkerDirection;
+}
+
+resetSettings();
 
 function disableGenerateBtn(){
   inputGenerateBtn.disabled = true;
@@ -89,7 +134,7 @@ function loadForm(){
   cols = parseInt(inputCols.value);
   maxFloors = parseInt(inputMaxFloors.value);
   placeFinish = inputColorLastPosition.checked;
-  showWalkers = inputColorLastPosition.checked; //TOD remove placeFinish
+  showWalkers = inputColorLastPosition.checked; //TOD remove placeFinish and rename inputColorLastPosition
   squareRatio = parseInt(inputFillSquare.value);
   tunnelRatio = parseInt(inputStartTunnel.value);
   tunnelMaxLength = parseInt(inputMaxTunnelLength.value);
@@ -113,7 +158,6 @@ const directions = {
 }
 
 function turnRight(direction){
-  //TODO esto grita unit tests
   return (direction+1)%4;
 }
 

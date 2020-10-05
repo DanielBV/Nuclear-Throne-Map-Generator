@@ -18,42 +18,42 @@
           <label> <b>Walker Movement Percentages (0-100)</b></label>
           <div class="walkerForm">
               <span class="label">% Turn Right</span>
-              <input id="iTurnRight" class="smallInput" type="text" value="20">
+              <input id="iTurnRight" class="smallInput" type="text" >
               <span class="label">% Turn Left</span>
-              <input id="iTurnLeft" class="smallInput" type="text" value="30">
+              <input id="iTurnLeft" class="smallInput" type="text" >
               <span class="label">% Turn Back</span>
-              <input id="iTurnBack" class="smallInput" type="text" value="15"></td>
+              <input id="iTurnBack" class="smallInput" type="text" ></td>
               <span class="label text-secondary">Forward</span>
               <input id="iForward" class="smallInput text-secondary" type="text" readonly="readonly"></td>
             </div>
           <label> <b>Walker Creation</b></label>
         <div class="walkerForm">
             <span class="label">Max walkers:</span>
-            <input id="iMaxWalkers" class="smallInput" type="text" value="50">  
+            <input id="iMaxWalkers" class="smallInput" type="text" >  
           </div>
         <div class="walkerForm">
           <span class="label"> % per walker to spawn a new walker (0-100)</span>
-          <input id="iWalkerSpawn" class="smallInput" type="text" value="5">
+          <input id="iWalkerSpawn" class="smallInput" type="text" >
           <span class="label"> Max new walkers per iteration</span>
-          <input id="iMaxWalkersPerIter" type="text" class="smallInput" value="1">
+          <input id="iMaxWalkersPerIter" type="text" class="smallInput" >
         </div>
         <div class="walkerForm">
           <span class="label">% per walker to despawn the walker (0-100)</span>
-          <input id="iWalkerDespawn" class="smallInput" type="text" value="1">
+          <input id="iWalkerDespawn" class="smallInput" type="text" >
           <span class="label"> Max removed walkers per iteration </span>
-          <input id="iMaxDespawnWalkersPerIter" class="smallInput" type="text" value="1">
+          <input id="iMaxDespawnWalkersPerIter" class="smallInput" type="text" >
         </div>
 
         <label> <b>Map Settings</b></label>
         <div class="walkerForm">
             <span class="label"> Rows:</span>
-            <input id="iRows" class="smallInput" type="text"  value="50">
+            <input id="iRows" class="smallInput" type="text"  >
             <span class="label"> Cols:</span>
-            <input id="iCols" class="smallInput" type="text" value="50">
+            <input id="iCols" class="smallInput" type="text" >
             <span class="label"> Max Floors:</span>
-            <input id="iMaxFloors" class="smallInput" type="text" value="110">
+            <input id="iMaxFloors" class="smallInput" type="text" >
             <span class="label"> Max iterations:</span>
-            <input id="iMaxIterations" type="text" class="smallInput" value="200">
+            <input id="iMaxIterations" type="text" class="smallInput" >
             <span class="label"> Color last walker position:</span>
             <input id="iColorLastPosition" value="false" type="checkbox">
             
@@ -61,9 +61,9 @@
           </div>
           <div class="walkerForm">
             <span class="label">Initial number of walkers:</span>
-            <input id="iInitialWalkers" class="smallInput" type="text" value="4">
+            <input id="iInitialWalkers" class="smallInput" type="text" >
             <span class="label">Different initial walker Direction:</span>
-            <input id="iDifferentWalkerDirection"  type="checkbox" checked>
+            <input id="iDifferentWalkerDirection"  type="checkbox">
           </div>
           
          
@@ -71,11 +71,11 @@
         <label> <b>Walker Behaviour</b></label>
         <div class="walkerForm">
             <span class="label">% per walker to fill a 2x2 grid (0-100)</span>
-            <input id="iFillSquare" class="smallInput" type="text" value="10">
+            <input id="iFillSquare" class="smallInput" type="text" >
             <span class="label">% per walker to start a tunnel (0-100)</span>
-            <input id="iStartTunnel" class="smallInput"  type="text" value="10">
+            <input id="iStartTunnel" class="smallInput"  type="text" >
             <span class="label">Max length of the tunnel:</span>
-            <input id="iTunnelMaxSize" class="smallInput"  type="text" value="4">
+            <input id="iTunnelMaxSize" class="smallInput"  type="text" >
           </div>
         </div>
         <button id="generateButton" class="btn btn-primary" onclick="setup()">Generate</button>
