@@ -20,14 +20,17 @@ const defaultSettings = {
   turnBack: 15,
   squareRatio: 10,
   tunnelRatio: 10,
-  tunnelMaxLength: 4
+  tunnelMaxLength: 4,
+  animationsEnabled: true,
+  iterationDelay: 100
 };
 
 
 let cols, rows;
 let pixelSize = 15;
-let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter, maxWalkerDespawnPerIter, placeFinish, squareRatio,
-  tunnelRatio, tunnelMaxLength, maxIterations, numInitialWalkers, initialWalkersInDifferentDirection, maxFloors, showWalkers;
+let spawnRatio,despawnRatio, maxWalkers, maxWalkersPerIter, maxWalkerDespawnPerIter, squareRatio,
+  tunnelRatio, tunnelMaxLength, maxIterations, numInitialWalkers, initialWalkersInDifferentDirection, maxFloors, 
+  showWalkers, enableAnimations, iterationDelay;
 
 let tlChance; // Turn left
 let trChance; // Turn Right
@@ -56,6 +59,8 @@ const inputMaxIterations = document.getElementById('iMaxIterations');
 const inputInitialWalkers = document.getElementById('iInitialWalkers');
 const inputDifferentWalkerDirection = document.getElementById('iDifferentWalkerDirection');
 const inputGenerateBtn = document.getElementById('generateButton'); 
+const inputDisableAnimations = document.getElementById('iDisableAnimation');
+const inputIterationDelay = document.getElementById('iIterationDelay');
 
 const labelTR = document.getElementById('labelTR');
 const labelTL = document.getElementById('labelTL');
@@ -93,6 +98,8 @@ function resetSettings(){
   inputMaxIterations.value = defaultSettings.maxIterations;
   inputInitialWalkers.value = defaultSettings.initialWalkers;
   inputDifferentWalkerDirection.checked = defaultSettings.differentWalkerDirection;
+  inputDisableAnimations.checked = !defaultSettings.animationsEnabled;
+  inputIterationDelay.value = defaultSettings.iterationDelay;
 }
 
 resetSettings();
@@ -182,14 +189,15 @@ function loadForm(){
   rows = parseInt(inputRows.value);
   cols = parseInt(inputCols.value);
   maxFloors = parseInt(inputMaxFloors.value);
-  placeFinish = inputColorLastPosition.checked;
-  showWalkers = inputColorLastPosition.checked; //TOD remove placeFinish and rename inputColorLastPosition
+  showWalkers = inputColorLastPosition.checked; 
   squareRatio = parseInt(inputFillSquare.value);
   tunnelRatio = parseInt(inputStartTunnel.value);
   tunnelMaxLength = parseInt(inputMaxTunnelLength.value);
   maxIterations = parseInt(inputMaxIterations.value);
   numInitialWalkers = parseInt(inputInitialWalkers.value);
   initialWalkersInDifferentDirection = inputDifferentWalkerDirection.checked;
+  enableAnimations = !inputDisableAnimations.checked;
+  iterationDelay = parseInt(inputIterationDelay.value);
 }
 
 /* min (included) and max (excluded). Source: https://www.w3schools.com/js/js_random.asp */
@@ -258,7 +266,7 @@ function nextIter(generator){
   if(x.value){
     map = x.value.map;
     walkers = x.value.stats.walkers;
-   setTimeout(() => nextIter(generator),100);
+   setTimeout(() => nextIter(generator), iterationDelay);
   }else{
     map.placeWalls();
     insideAnimation = false;
@@ -266,21 +274,33 @@ function nextIter(generator){
   }
 }
 
+function createMapFromGenerator(mapGenerator){ 
+  let i = mapGenerator.next();
+  let last;
+  while(i.value){
+    last = i.value;
+    i = mapGenerator.next();
+  }
+
+  map = last.map;
+  map.placeWalls();
+  walkers = last.stats.walkers
+}
+
 function createMap(){
-  insideAnimation = true;
-  checkGenerateBtn();
   const mapConfig = {rows, cols, numInitialWalkers, maxWalkersPerIter, spawnRatio, despawnRatio, maxWalkerDespawnPerIter};
   const walkerPrototype = new Walker(tlChance,trChance,dtChance,tbChance, Math.floor(cols/2), Math.floor(rows/2), directions.DOWN, squareRatio, tunnelRatio, tunnelMaxLength );;
   const generator = new MapGenerator(mapConfig, walkerPrototype);
   const mapGenerator = generator.generateMap();
-  let result;
+
   map = mapGenerator.next().value.map;
-  nextIter(mapGenerator);
-  
- /* map = result.map;
-  map.placeWalls();
-  if(placeFinish)
-    generator.colorWalkers(map, result.stats.walkers);*/
+  if(enableAnimations){
+    insideAnimation = true;
+    checkGenerateBtn();
+    nextIter(mapGenerator);
+  }
+  else 
+    createMapFromGenerator(mapGenerator);
 }
 
 function draw() {
