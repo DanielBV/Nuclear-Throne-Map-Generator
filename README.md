@@ -3,7 +3,7 @@ A 2D map generator similar to the one that Nuclear Throne uses. It's an extremel
 
 The website allows configuring multiple settings of the walkers: Percentage of changing direction, creating tunnels, map size, walker spawn/despawn percentage, etc.
 
-The algorithm is based on the one in Wasteland Kings (a Nuclear Throne early version). Source: https://indienova.com/u/root/blogread/1766 (It isn't the original post, but it was deleted. You can see it here. https://web.archive.org/web/20160313200825/https://www.vlambeer.com/2013/04/02/random-level-generation-in-wasteland-kings/)
+The algorithm is based on the one in Wasteland Kings (a Nuclear Throne early version). Source: https://indienova.com/u/root/blogread/1766 (It isn't the original post, but it was deleted. You can also see it here. https://web.archive.org/web/20160313200825/https://www.vlambeer.com/2013/04/02/random-level-generation-in-wasteland-kings/)
 
 
 ## Known bugs
@@ -14,4 +14,5 @@ The algorithm is based on the one in Wasteland Kings (a Nuclear Throne early ver
 
 ## Features (that I'm not going to make)
 * Adding chest/enemies to the map
+* Zoom in/out
 * Stats collection (max walkers in an iteration, number of walkers destroyed, number of walkers spawned, average tunnel size)

@@ -5,9 +5,9 @@
 const defaultSettings = {
   rows: 50,
   cols: 50,
-  maxFloors: 110,
+  maxFloors: 300,
   maxIterations: 200,
-  colorWalkers: false,
+  colorWalkers: true,
   initialWalkers: 4,
   differentWalkerDirection: true,
   maxWalkers: 50,
@@ -19,7 +19,7 @@ const defaultSettings = {
   turnLeft: 30,
   turnBack: 15,
   squareRatio: 10,
-  tunnelRatio: 10,
+  tunnelRatio: 15,
   tunnelMaxLength: 4,
   animationsEnabled: true,
   iterationDelay: 100
